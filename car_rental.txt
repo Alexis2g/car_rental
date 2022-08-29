@@ -1,0 +1,108 @@
+
+DROP TABLE IF EXISTS T_CLIENT_GENERAL;
+DROP TABLE IF EXISTS T_CLIENT_CONTACT;
+DROP TABLE IF EXISTS T_CLIENT_ADDRESS;
+DROP TABLE IF EXISTS T_CLIENT_COUNTRY;
+DROP TABLE IF EXISTS T_CLIENT_CITY;
+
+
+CREATE TABLE T_CLIENT_GENERAL (
+    clt_general_id INTEGER,
+    clt_general_first_name VARCHAR(60),
+    clt_general_last_name VARCHAR(100),
+    clt_general_year_birth INTEGER,
+    PRIMARY KEY (clt_general_id)
+);
+
+CREATE TABLE T_CLIENT_CONTACT (
+    clt_contact_id INTEGER,
+    clt_contact_mail VARCHAR(200),
+    clt_contact_phone INT(10),
+    PRIMARY KEY (clt_contact_id),
+    FOREIGN KEY (clt_contact_id) REFERENCES T_CLIENT_GENERAL (clt_general_id)
+);
+
+CREATE TABLE T_CLIENT_ADDRESS (
+    clt_address_id INTEGER,
+    clt_country_id INTEGER,
+    clt_city_id INTEGER,
+    PRIMARY KEY (clt_address_id),
+    FOREIGN KEY (clt_address_id) REFERENCES T_CLIENT_GENERAL (clt_general_id)
+);
+
+CREATE TABLE T_CLIENT_COUNTRY (
+    clt_country_id INTEGER,
+    clt_country_name VARCHAR(80),
+    PRIMARY KEY (clt_country_id),
+    FOREIGN KEY (clt_country_id) REFERENCES T_CLIENT_ADDRESS (clt_country_id)
+);
+
+
+CREATE TABLE T_CLIENT_CITY (
+    clt_city_id INTEGER,
+    clt_city_name VARCHAR(80),
+    PRIMARY KEY (clt_city_id),
+    FOREIGN KEY (clt_city_id) REFERENCES T_CLIENT_ADDRESS (clt_city_id)    
+);
+
+
+
+INSERT INTO T_CLIENT_GENERAL (
+    clt_general_first_name, clt_general_last_name, clt_general_year_birth)
+VALUES 
+    ("Susan", "WILSON", 1960), 
+    ("Margaret", "MOORE", 1970), 
+    ("Lisa", "ANDERSON", 1980)
+;
+
+INSERT INTO T_CLIENT_CONTACT (
+    clt_contact_mail, clt_contact_phone)
+VALUES 
+    ("SUSAN.WILSON@sakilacustomer.org", 0689647521), 
+    ("MARGARET.MOORE@sakilacustomer.org", 0685246697), 
+    ("lisa.ANDERSON@sakilacustomer.org", 0741426587)
+;
+
+INSERT INTO T_CLIENT_ADDRESS (
+    clt_country_id, clt_city_id)
+VALUES 
+    (1, 2), (2, 3), (3, 1)
+;
+INSERT INTO T_CLIENT_COUNTRY (
+    clt_country_name)
+VALUES
+    ("USA"), ("FRANCE"),
+    ("ITALY"), ("UNITED KINGDOM"),
+    ("GERMANY"), ("SPAIN")
+;
+
+INSERT INTO T_CLIENT_CITY (
+    clt_city_name)
+VALUES
+    ("Chicago"), ("Miami"),
+    ("Lyon"), ("Marseille"),
+    ("Rome"), ("Bari"),
+    ("London"), ("Manchester"),
+    ("Berlin"), ("Stuttgart"),
+    ("Madrid"), ("Barcelona")
+;
+
+
+
+
+
+SELECT * FROM T_CLIENT_GENERAL;
+SELECT * FROM T_CLIENT_CONTACT;
+SELECT * FROM T_CLIENT_ADDRESS;
+SELECT * FROM T_CLIENT_COUNTRY;
+SELECT * FROM T_CLIENT_CITY;
+
+SELECT clt_general_first_name AS Prénom, clt_general_last_name AS Nom_Famille, 
+    clt_contact_mail AS Mail, clt_city_name AS Ville,
+    clt_country_name AS Pays_actuel
+FROM T_CLIENT_GENERAL AS CG
+JOIN T_CLIENT_CONTACT AS CC ON CG.clt_general_id = CC.clt_contact_id
+JOIN T_CLIENT_ADDRESS AS CA ON CG.clt_general_id = CA.clt_address_id
+JOIN T_CLIENT_CITY AS CCITY ON CA.clt_city_id = CCITY.clt_city_id
+JOIN T_CLIENT_COUNTRY AS CCOUNTRY ON CA.clt_country_id = CCOUNTRY.clt_country_id
+;
