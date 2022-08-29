@@ -103,10 +103,10 @@ VALUES
 CREATE TABLE T_VEHICLE_GENERAL (
     veh_general_id INTEGER,
     veh_general_model VARCHAR(50),
-    veh_brand VARCHAR(60),
-    veh_year INTEGER,
-    veh_type_id INTEGER,
-    veh_precise_model VARCHAR(150),
+    veh_general_brand VARCHAR(60),
+    veh_general_year INTEGER,
+    veh_general_type_id INTEGER,
+    veh_general_precise_model VARCHAR(150),
     PRIMARY KEY (veh_general_id)    
 );
 
@@ -142,7 +142,63 @@ CREATE TABLE T_VEHICLE_ASPIRATION (
 );
 
 
+INSERT INTO T_VEHICLE_GENERAL (
+    veh_general_model, veh_general_brand, 
+    veh_general_year, veh_general_type_id, 
+    veh_general_precise_model)
+VALUES 
+    ("911", "Porsche", 2020, 2, "911 GT2 RS MR"),
+    ("488", "FERRARI", 2018, 2, "488 Pista"),
+    ("Viper", "Dodge", 2017, 2, "Viper ACR"),
+    ("Mégane", "Renault", 2017, 1, "Mégane III RS"),
+    ("A4", "Audi", 2016, 3, "A4 Quattro")
+;
 
+
+INSERT INTO T_VEHICLE_TYPE (
+    veh_type_name)
+VALUES 
+    ("Hatchback"),
+    ("Coupé"),
+    ("Saloon"),
+    ("Convertible"),
+    ("SUV")
+;
+
+INSERT INTO T_VEHICLE_COMFORT (
+    veh_comfort_doors,
+    veh_comfort_seats)
+VALUES 
+    (2, 2),
+    (2, 2),
+    (2, 2),
+    (2, 4),
+    (4, 5)
+;
+
+INSERT INTO T_VEHICLE_PERFORMANCE (
+    veh_performance_horsepower,
+    veh_performance_weight,
+    veh_aspiration_id)
+VALUES 
+    (750, 1470, 3),
+    (710, 1500, 3),
+    (645, 1530, 4),
+    (296, 1430, 2),
+    (187, 1680, 1)
+;
+
+INSERT INTO T_VEHICLE_ASPIRATION (
+    veh_aspiration_type)
+VALUES 
+    ("Naturally Aspirated"),
+    ("Turbo"),
+    ("TwinTurbo"),
+    ("Supercharger"),
+    ("Electric"),
+    ("Hybrid"),
+    ("Hybrid Turbo")
+;
 
 
 
@@ -152,6 +208,13 @@ SELECT * FROM T_CLIENT_CONTACT;
 SELECT * FROM T_CLIENT_ADDRESS;
 SELECT * FROM T_CLIENT_COUNTRY;
 SELECT * FROM T_CLIENT_CITY;
+
+SELECT * FROM T_VEHICLE_GENERAL;
+SELECT * FROM T_VEHICLE_TYPE;
+SELECT * FROM T_VEHICLE_COMFORT;
+SELECT * FROM T_VEHICLE_PERFORMANCE;
+SELECT * FROM T_VEHICLE_ASPIRATION;
+
 
 SELECT clt_general_first_name AS Prénom, clt_general_last_name AS Nom_Famille, 
     clt_contact_mail AS Mail, clt_city_name AS Ville,
