@@ -5,6 +5,12 @@ DROP TABLE IF EXISTS T_CLIENT_ADDRESS;
 DROP TABLE IF EXISTS T_CLIENT_COUNTRY;
 DROP TABLE IF EXISTS T_CLIENT_CITY;
 
+DROP TABLE IF EXISTS T_VEHICLE_GENERAL;
+DROP TABLE IF EXISTS T_VEHICLE_TYPE;
+DROP TABLE IF EXISTS T_VEHICLE_COMFORT;
+DROP TABLE IF EXISTS T_VEHICLE_PERFORMANCE;
+DROP TABLE IF EXISTS T_VEHICLE_ASPIRATION;
+
 
 CREATE TABLE T_CLIENT_GENERAL (
     clt_general_id INTEGER,
@@ -24,26 +30,28 @@ CREATE TABLE T_CLIENT_CONTACT (
 
 CREATE TABLE T_CLIENT_ADDRESS (
     clt_address_id INTEGER,
-    clt_country_id INTEGER,
     clt_city_id INTEGER,
     PRIMARY KEY (clt_address_id),
     FOREIGN KEY (clt_address_id) REFERENCES T_CLIENT_GENERAL (clt_general_id)
+);
+
+CREATE TABLE T_CLIENT_CITY (
+    clt_city_id INTEGER,
+    clt_city_name VARCHAR(80),
+    clt_country_id INTEGER,
+    PRIMARY KEY (clt_city_id),
+    FOREIGN KEY (clt_city_id) REFERENCES T_CLIENT_ADDRESS (clt_city_id)    
 );
 
 CREATE TABLE T_CLIENT_COUNTRY (
     clt_country_id INTEGER,
     clt_country_name VARCHAR(80),
     PRIMARY KEY (clt_country_id),
-    FOREIGN KEY (clt_country_id) REFERENCES T_CLIENT_ADDRESS (clt_country_id)
+    FOREIGN KEY (clt_country_id) REFERENCES T_CLIENT_CITY (clt_country_id)
 );
 
 
-CREATE TABLE T_CLIENT_CITY (
-    clt_city_id INTEGER,
-    clt_city_name VARCHAR(80),
-    PRIMARY KEY (clt_city_id),
-    FOREIGN KEY (clt_city_id) REFERENCES T_CLIENT_ADDRESS (clt_city_id)    
-);
+
 
 
 
@@ -64,10 +72,22 @@ VALUES
 ;
 
 INSERT INTO T_CLIENT_ADDRESS (
-    clt_country_id, clt_city_id)
+    clt_city_id)
 VALUES 
-    (1, 2), (2, 3), (3, 1)
+    (1), (2), (3)
 ;
+
+INSERT INTO T_CLIENT_CITY (
+    clt_city_name, clt_country_id)
+VALUES
+    ("Chicago", 1), ("Miami", 1),
+    ("Lyon", 2 ), ("Marseille", 2),
+    ("Rome", 3), ("Bari", 3),
+    ("London", 4), ("Manchester", 4),
+    ("Berlin", 5), ("Stuttgart", 5),
+    ("Madrid", 6), ("Barcelona", 6)
+;
+
 INSERT INTO T_CLIENT_COUNTRY (
     clt_country_name)
 VALUES
@@ -76,16 +96,52 @@ VALUES
     ("GERMANY"), ("SPAIN")
 ;
 
-INSERT INTO T_CLIENT_CITY (
-    clt_city_name)
-VALUES
-    ("Chicago"), ("Miami"),
-    ("Lyon"), ("Marseille"),
-    ("Rome"), ("Bari"),
-    ("London"), ("Manchester"),
-    ("Berlin"), ("Stuttgart"),
-    ("Madrid"), ("Barcelona")
-;
+
+
+
+
+CREATE TABLE T_VEHICLE_GENERAL (
+    veh_general_id INTEGER,
+    veh_general_model VARCHAR(50),
+    veh_brand VARCHAR(60),
+    veh_year INTEGER,
+    veh_type_id INTEGER,
+    veh_precise_model VARCHAR(150),
+    PRIMARY KEY (veh_general_id)    
+);
+
+CREATE TABLE T_VEHICLE_TYPE (
+    veh_type_id INTEGER,
+    veh_type_name VARCHAR(50),
+    PRIMARY KEY (veh_type_id),
+    FOREIGN KEY (veh_type_id) REFERENCES T_VEHICLE_GENERAL (veh_type_id)     
+);
+
+CREATE TABLE T_VEHICLE_COMFORT (
+    veh_comfort_id INTEGER,
+    veh_comfort_doors INTEGER,
+    veh_comfort_seats INTEGER,
+    PRIMARY KEY (veh_comfort_id),
+    FOREIGN KEY (veh_comfort_id) REFERENCES T_VEHICLE_GENERAL (veh_general_id)     
+);
+
+CREATE TABLE T_VEHICLE_PERFORMANCE (
+    veh_performance_id INTEGER,
+    veh_performance_horsepower INTEGER,
+    veh_performance_weight INTEGER,
+    veh_aspiration_id INTEGER,
+    PRIMARY KEY (veh_performance_id),
+    FOREIGN KEY (veh_performance_id) REFERENCES T_VEHICLE_GENERAL (veh_general_id)     
+);
+
+CREATE TABLE T_VEHICLE_ASPIRATION (
+    veh_aspiration_id INTEGER,
+    veh_aspiration_type VARCHAR(50),
+    PRIMARY KEY (veh_aspiration_id),
+    FOREIGN KEY (veh_aspiration_id) REFERENCES T_VEHICLE_PERFORMANCE (veh_aspiration_id)     
+);
+
+
 
 
 
@@ -99,10 +155,10 @@ SELECT * FROM T_CLIENT_CITY;
 
 SELECT clt_general_first_name AS Prénom, clt_general_last_name AS Nom_Famille, 
     clt_contact_mail AS Mail, clt_city_name AS Ville,
-    clt_country_name AS Pays_actuel
+    clt_country_name AS Pays
 FROM T_CLIENT_GENERAL AS CG
 JOIN T_CLIENT_CONTACT AS CC ON CG.clt_general_id = CC.clt_contact_id
 JOIN T_CLIENT_ADDRESS AS CA ON CG.clt_general_id = CA.clt_address_id
 JOIN T_CLIENT_CITY AS CCITY ON CA.clt_city_id = CCITY.clt_city_id
-JOIN T_CLIENT_COUNTRY AS CCOUNTRY ON CA.clt_country_id = CCOUNTRY.clt_country_id
+JOIN T_CLIENT_COUNTRY AS CCOUNTRY ON CCITY.clt_country_id = CCOUNTRY.clt_country_id
 ;
