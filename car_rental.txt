@@ -137,7 +137,6 @@ VALUES
 ;
 
 -- Create the Vehicule Tables
-
 CREATE TABLE T_VEHICLE_GENERAL (
     veh_general_id INTEGER,
     veh_general_model VARCHAR(50),
@@ -254,8 +253,7 @@ VALUES
     ("Hybrid Turbo")
 ;
 
--- Create the Reservation tables
-
+-- Create the Reservation tables 
 CREATE TABLE T_RESERVATION_GENERAL (
     rsv_general_id INTEGER,
     rsv_client_general_id INTEGER, 
@@ -385,7 +383,7 @@ SELECT * FROM T_RESERVATION_PRICING;
 
 
 -- A "select" query joining all the clien tables
-/*
+
 SELECT clt_general_id,
 clt_general_first_name AS Prénom, clt_general_last_name AS Nom_Famille, 
     clt_contact_mail AS Mail, clt_city_name AS Ville,
@@ -427,4 +425,3 @@ JOIN T_RESERVATION_PRICING AS RP ON RP.rsv_pricing_id = RG.rsv_general_id
 JOIN T_CLIENT_GENERAL AS CG ON CG.clt_general_id = RG.rsv_client_general_id
 JOIN T_VEHICLE_GENERAL AS VG ON VG.veh_general_id = RG.rsv_vehicle_general_id
 ;
-*/
