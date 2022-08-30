@@ -65,7 +65,24 @@ INSERT INTO T_CLIENT_GENERAL (
 VALUES 
     ("Susan", "WILSON", 1960), 
     ("Margaret", "MOORE", 1970), 
-    ("Lisa", "ANDERSON", 1980)
+    ("Lisa", "ANDERSON", 1980),
+    ("Husna", "ALVAREZ", 1992),
+    ("Igor", "GOODWIN", 1967),
+    ("Jimmy", "BUSBY", 1985),
+    ("Nico", "MACK", 1961),
+    ("Eloise", "MOSLEY", 1982),
+    ("Neha", "WEBB", 1966),
+    ("Eliana", "PARKINSON", 2000),
+    ("Ellie", "KNOXX", 1996),
+    ("Lucy", "DALE", 1966),
+    ("Gary", "SNIDER", 1999),
+    ("Teri", "WELSCH", 1974),
+    ("Victor", "LORD", 1997),
+    ("Lizzie", "RUSSEL", 1992),
+    ("Apolline", "LUCAS", 2004),
+    ("Rémi", "GOSSELIN", 2005),
+    ("Adèle", "SALMON", 1969),
+    ("Jordan", "SAVERE", 1978)
 ;
 
 INSERT INTO T_CLIENT_CONTACT (
@@ -73,13 +90,31 @@ INSERT INTO T_CLIENT_CONTACT (
 VALUES 
     ("SUSAN.WILSON@sakilacustomer.org", 0689647521), 
     ("MARGARET.MOORE@sakilacustomer.org", 0685246697), 
-    ("lisa.ANDERSON@sakilacustomer.org", 0741426587)
+    ("lisa.ANDERSON@sakilacustomer.org", 0741426587),
+    ("husalv@gmail.org", 0788665428),
+    ("igorgood@gmail.net", 0798659428),
+    ("jimmmy@hotmail.com", 0732545518),
+    ("mack.nico@hotmail.com", 0628936814),
+    ("mosley.e@hotmail.com", 0747186251),
+    ("nehawebb@hotmail.net", 0739345117),
+    ("elianap@hotmail.net", 0636658249),
+    ("eknoxx@yahoo.com", 0723524998),
+    ("lucydale@hotmail.net", 0663595614),
+    ("garys@hotmail.net", 0741563879),
+    ("welteri@hotmail.net", 0748752371),
+    ("lordvic@hotmail.net", 0635978414),
+    ("lizrus@yahoo.com", 0613968347),
+    ("lucasa@yahoo.com", 0636912189),
+    ("remigoss@yahoo.com", 0686564120),
+    ("salmonadele@yahoo.com", 0620486190),
+    ("jordansav@yahoo.net", 0632409704)
 ;
 
 INSERT INTO T_CLIENT_ADDRESS (
     clt_city_id)
 VALUES 
-    (1), (2), (3)
+    (1), (2), (3), (10), (9), (7), (10), (3), (5), (4),
+    (2), (8), (7), (8), (7), (2), (1), (4), (9), (6)
 ;
 
 INSERT INTO T_CLIENT_CITY (
@@ -155,7 +190,12 @@ VALUES
     ("488", "FERRARI", 2018, 2, "488 Pista"),
     ("Viper", "Dodge", 2017, 2, "Viper ACR"),
     ("Mégane", "Renault", 2017, 1, "Mégane III RS"),
-    ("A4", "Audi", 2016, 3, "A4 Quattro")
+    ("A4", "Audi", 2016, 3, "A4 Quattro"),
+    ("Leaf", "Nissan", 2017, 1, "Leaf 2nd Gen"),
+    ("Yaris", "Toyota", 2020, 1, "Yaris 4 Hybrid"),
+    ("i8", "BMW", 2018, 4, "i8 Roadster"),
+    ("XC40", "Volvo", 2018, 5, "XC40"),
+    ("GT", "Ford", 2017, 2, "GT II")
 ;
 
 
@@ -177,7 +217,12 @@ VALUES
     (2, 2),
     (2, 2),
     (2, 4),
-    (4, 5)
+    (4, 5),
+    (4, 5),
+    (4, 4),
+    (2, 2),
+    (4, 5),
+    (2, 2)
 ;
 
 INSERT INTO T_VEHICLE_PERFORMANCE (
@@ -189,7 +234,12 @@ VALUES
     (710, 1500, 3),
     (645, 1530, 4),
     (296, 1430, 2),
-    (187, 1680, 1)
+    (187, 1680, 1),
+    (215, 1600, 5),
+    (116, 1085, 6),
+    (374, 1665, 7),
+    (247, 1680, 2),
+    (656, 1385, 3)
 ;
 
 INSERT INTO T_VEHICLE_ASPIRATION (
@@ -247,7 +297,27 @@ INSERT INTO T_RESERVATION_GENERAL (
     rsv_general_date_off_id,
     rsv_general_price_id)
 VALUES
-    (1, 1, "2022-08-01", 5, "2022-08-05", 1, 1)
+    (1, 1, "2022-08-01", 5, "2022-08-05", 1, 1),
+    (17, 8, "2022-07-15", 11, "2022-07-25", 2, 2),
+    (3, 6, "2022-07-17", 16, "2022-07-31", 3, 3),
+    (2, 2, "2022-07-06", 22, "2022-07-27", 4, 4),
+    (11, 3, "2022-07-04", 36, "2022-08-08", 5, 5),
+    (8, 2, "2022-08-03", 5, "2022-08-07", 6, 6),
+    (19, 4, "2022-07-11", 5, "2022-07-19", 7, 7),
+    (9, 9, "2022-07-15", 16, "2022-07-30", 8, 8),
+    (13, 1, "2022-08-07", 12, "2022-08-18", 9, 9),
+    (3, 4, "2022-07-28", 16, "2022-08-12", 10, 10),
+    (20, 5, "2022-07-16", 19, "2022-08-03", 11, 11),
+    (11, 8, "2022-07-26", 19, "2022-08-13", 12, 12),
+    (13, 2, "2022-08-09", 9, "2022-08-17", 13, 13),
+    (12, 7, "2022-07-13", 25, "2022-08-06", 14, 14),
+    (2, 9, "2022-08-15", 11, "2022-08-25", 15, 15),
+    (20, 1, "2022-08-19", 7, "2022-08-25", 16, 16),
+    (17, 4, "2022-08-17", 6, "2022-08-22", 17, 17),
+    (4, 2, "2022-08-18", 12, "2022-08-29", 18, 18),
+    (19, 7, "2022-08-09", 13, "2022-08-21", 19, 19),
+    (2, 6, "2022-08-05", 21, "2022-08-25", 20, 20),
+    (15, 5, "2022-08-09", 11, "2022-08-19", 21, 21)
 ;
 
 
@@ -255,13 +325,43 @@ INSERT INTO T_RESERVATION_CHECKOUT (
     rsv_checkout_date_off, 
     rsv_checkout_extra_days)
 VALUES
-    ("2022-08-06", 1)
+    ("2022-08-06", 1),
+    ("2022-07-25", 0),
+    ("2022-07-30", -1),
+    ("2022-07-27", 0),
+    ("2022-08-09", 1),
+    ("2022-08-07", 0),
+    ("2022-07-22", 3),
+    ("2022-07-30", 0),
+    ("2022-08-17", -1),
+    ("2022-08-13", 1),
+    ("2022-08-03", 0),
+    ("2022-08-19", 6),
+    ("2022-08-17", 0),
+    ("2022-08-06", 0),
+    ("2022-08-24", -1),
+    ("2022-08-27", 2),
+    ("2022-08-22", 0),
+    ("2022-08-30", 1),
+    ("2022-08-21", 0),
+    ("2022-08-25", 0),
+    ("2022-08-19", 0)
 ;
 
 INSERT INTO T_RESERVATION_PRICING (
     rsv_ordinary_pricing, rsv_extra_pricing)
 VALUES 
-    (1000, 500)
+    (1000, 300), (2000, 0),
+    (600, -20), (5500, 0),
+    (7500, 400), (1650, 0),
+    (890, 150), (1700, 0),
+    (4200, 200), (2300, 150),
+    (2100, 0), (5300, 1100),
+    (2800, 0), (1290, 0),
+    (850, -40), (1850, 650),
+    (790, 0), (3650, 250),
+    (1070, 0), (1020, 0),
+    (1340, 0)
 ;
 
 -- Test the tables content if needed
@@ -283,9 +383,11 @@ SELECT * FROM T_RESERVATION_CHECKOUT;
 SELECT * FROM T_RESERVATION_PRICING;
 */
 
--- A select query joining all the clien tables
+
+-- A "select" query joining all the clien tables
 /*
-SELECT clt_general_first_name AS Prénom, clt_general_last_name AS Nom_Famille, 
+SELECT clt_general_id,
+clt_general_first_name AS Prénom, clt_general_last_name AS Nom_Famille, 
     clt_contact_mail AS Mail, clt_city_name AS Ville,
     clt_country_name AS Pays
 FROM T_CLIENT_GENERAL AS CG
@@ -294,12 +396,22 @@ JOIN T_CLIENT_ADDRESS AS CA ON CG.clt_general_id = CA.clt_address_id
 JOIN T_CLIENT_CITY AS CCITY ON CA.clt_city_id = CCITY.clt_city_id
 JOIN T_CLIENT_COUNTRY AS CCOUNTRY ON CCITY.clt_country_id = CCOUNTRY.clt_country_id
 ;
-*/
 
+-- A "select" query joining all the Vehicles tables
+SELECT veh_general_precise_model AS Model,
+        veh_general_brand AS Brand,
+        veh_type_name AS Bodytype,
+        veh_comfort_seats AS "Number of Seats",
+        veh_performance_horsepower AS "Horse Power",
+        veh_aspiration_type AS "Engine Type"
+FROM T_VEHICLE_GENERAL AS VG
+JOIN T_VEHICLE_TYPE AS VT ON VT.veh_type_id = VG.veh_general_type_id
+JOIN T_VEHICLE_COMFORT AS VC ON VC.veh_comfort_id = VG.veh_general_id
+JOIN T_VEHICLE_PERFORMANCE AS VP ON VP.veh_performance_id = VG.veh_general_id
+JOIN T_VEHICLE_ASPIRATION AS VA ON VA.veh_aspiration_id = VP.veh_aspiration_id
+;
 
-
-
--- A query joining clients, vehicules, and rentals
+-- A "select" query joining clients, vehicules, and rentals
 SELECT clt_general_first_name AS "Client First Name",
         clt_general_last_name AS "Client Last Name",
         veh_general_precise_model AS "Vehicle Model",
@@ -312,7 +424,7 @@ SELECT clt_general_first_name AS "Client First Name",
 FROM T_RESERVATION_GENERAL AS RG
 JOIN T_RESERVATION_CHECKOUT AS RC ON RC.rsv_checkout_id = RG.rsv_general_id
 JOIN T_RESERVATION_PRICING AS RP ON RP.rsv_pricing_id = RG.rsv_general_id
-JOIN T_CLIENT_GENERAL AS CG ON CG.clt_general_id = RG.rsv_general_id
-JOIN T_VEHICLE_GENERAL AS VG ON VG.veh_general_id = RG.rsv_general_id
+JOIN T_CLIENT_GENERAL AS CG ON CG.clt_general_id = RG.rsv_client_general_id
+JOIN T_VEHICLE_GENERAL AS VG ON VG.veh_general_id = RG.rsv_vehicle_general_id
 ;
-
+*/
