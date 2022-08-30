@@ -1,4 +1,6 @@
 
+
+
 DROP TABLE IF EXISTS T_CLIENT_GENERAL;
 DROP TABLE IF EXISTS T_CLIENT_CONTACT;
 DROP TABLE IF EXISTS T_CLIENT_ADDRESS;
@@ -11,6 +13,9 @@ DROP TABLE IF EXISTS T_VEHICLE_COMFORT;
 DROP TABLE IF EXISTS T_VEHICLE_PERFORMANCE;
 DROP TABLE IF EXISTS T_VEHICLE_ASPIRATION;
 
+DROP TABLE IF EXISTS T_RESERVATION_GENERAL;
+DROP TABLE IF EXISTS T_RESERVATION_CHECKOUT;
+DROP TABLE IF EXISTS T_RESERVATION_PRICING;
 
 CREATE TABLE T_CLIENT_GENERAL (
     clt_general_id INTEGER,
@@ -225,3 +230,79 @@ JOIN T_CLIENT_ADDRESS AS CA ON CG.clt_general_id = CA.clt_address_id
 JOIN T_CLIENT_CITY AS CCITY ON CA.clt_city_id = CCITY.clt_city_id
 JOIN T_CLIENT_COUNTRY AS CCOUNTRY ON CCITY.clt_country_id = CCOUNTRY.clt_country_id
 ;
+
+
+
+
+CREATE TABLE T_RESERVATION_GENERAL (
+    rsv_general_id INTEGER,
+    rsv_client_general_id INTEGER, 
+    rsv_vehicle_general_id INTEGER,
+    rsv_general_date_on DATETIME,
+    rsv_general_duration INTEGER,
+    rsv_general_estimate_off DATETIME,
+    rsv_general_date_off_id INTEGER,
+    rsv_general_price_id INTEGER,
+    PRIMARY KEY (rsv_general_id)
+--    , FOREIGN KEY rsv_client_general_id REFERENCES T_CLIENT_GENERAL (client_general_id)
+--    FOREIGN KEY rsv_vehicle_general_id REFERENCES T_VEHICLE_GENERAL (vehicle_general_id)
+);
+
+CREATE TABLE T_RESERVATION_CHECKOUT (
+    rsv_checkout_id INTEGER,
+    rsv_checkout_date_off DATETIME,
+    rsv_checkout_extra_days INTEGER,
+    PRIMARY KEY (rsv_checkout_id)
+--    FOREIGN KEY (rsv_vehicle_general_id) REFERENCES T_VEHICLE_GENERAL (vehicle_general_id)
+);
+
+CREATE TABLE T_RESERVATION_PRICING (
+    rsv_pricing_id INTEGER,
+    rsv_ordinary_pricing DECIMAL,
+    rsv_extra_pricing DECIMAL,
+    PRIMARY KEY (rsv_pricing_id)
+);
+
+
+INSERT INTO T_RESERVATION_GENERAL (
+    rsv_client_general_id, 
+    rsv_vehicle_general_id,
+    rsv_general_date_on,
+    rsv_general_duration,
+    rsv_general_estimate_off,
+    rsv_general_date_off_id,
+    rsv_general_price_id)
+VALUES
+    (1, 1, "2022-08-01", 5, "2022-08-05", 1, 1)
+;
+
+
+INSERT INTO T_RESERVATION_CHECKOUT (
+    rsv_checkout_date_off, 
+    rsv_checkout_extra_days)
+VALUES
+    ("2022-08-06", 1)
+;
+
+INSERT INTO T_RESERVATION_PRICING (
+    rsv_ordinary_pricing, rsv_extra_pricing)
+VALUES 
+    (1000, 500)
+;
+
+
+
+
+SELECT * FROM T_RESERVATION_GENERAL;
+SELECT * FROM T_RESERVATION_CHECKOUT;
+SELECT * FROM T_RESERVATION_PRICING;
+
+
+SELECT rsv_general_date_on AS Vehicle_Pickup, rsv_general_duration AS "Loc Duration", 
+    rsv_general_estimate_off Loc_Estimate_End, rsv_checkout_date_off AS Vehicle_Restitution,
+    rsv_checkout_extra_days AS Extra_Days, (rsv_ordinary_pricing + rsv_extra_pricing) AS "Total Price"
+FROM T_RESERVATION_GENERAL AS RG
+JOIN T_RESERVATION_CHECKOUT AS RC ON RC.rsv_checkout_id = RG.rsv_general_id
+JOIN T_RESERVATION_PRICING AS RP ON RP.rsv_pricing_id = RG.rsv_general_id
+;
+
