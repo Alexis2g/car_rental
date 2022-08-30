@@ -1,6 +1,4 @@
-
-
-
+-- Clear Database 
 DROP TABLE IF EXISTS T_CLIENT_GENERAL;
 DROP TABLE IF EXISTS T_CLIENT_CONTACT;
 DROP TABLE IF EXISTS T_CLIENT_ADDRESS;
@@ -16,6 +14,8 @@ DROP TABLE IF EXISTS T_VEHICLE_ASPIRATION;
 DROP TABLE IF EXISTS T_RESERVATION_GENERAL;
 DROP TABLE IF EXISTS T_RESERVATION_CHECKOUT;
 DROP TABLE IF EXISTS T_RESERVATION_PRICING;
+
+-- Create the Client side tables
 
 CREATE TABLE T_CLIENT_GENERAL (
     clt_general_id INTEGER,
@@ -58,7 +58,7 @@ CREATE TABLE T_CLIENT_COUNTRY (
 
 
 
-
+-- Insert the client side data
 
 INSERT INTO T_CLIENT_GENERAL (
     clt_general_first_name, clt_general_last_name, clt_general_year_birth)
@@ -101,9 +101,7 @@ VALUES
     ("GERMANY"), ("SPAIN")
 ;
 
-
-
-
+-- Create the Vehicule Tables
 
 CREATE TABLE T_VEHICLE_GENERAL (
     veh_general_id INTEGER,
@@ -119,7 +117,7 @@ CREATE TABLE T_VEHICLE_TYPE (
     veh_type_id INTEGER,
     veh_type_name VARCHAR(50),
     PRIMARY KEY (veh_type_id),
-    FOREIGN KEY (veh_type_id) REFERENCES T_VEHICLE_GENERAL (veh_type_id)     
+    FOREIGN KEY (veh_type_id) REFERENCES T_VEHICLE_GENERAL (veh_general_type_id)     
 );
 
 CREATE TABLE T_VEHICLE_COMFORT (
@@ -146,6 +144,7 @@ CREATE TABLE T_VEHICLE_ASPIRATION (
     FOREIGN KEY (veh_aspiration_id) REFERENCES T_VEHICLE_PERFORMANCE (veh_aspiration_id)     
 );
 
+-- Insert data in the vehicle tables
 
 INSERT INTO T_VEHICLE_GENERAL (
     veh_general_model, veh_general_brand, 
@@ -205,34 +204,7 @@ VALUES
     ("Hybrid Turbo")
 ;
 
-
-
-
-SELECT * FROM T_CLIENT_GENERAL;
-SELECT * FROM T_CLIENT_CONTACT;
-SELECT * FROM T_CLIENT_ADDRESS;
-SELECT * FROM T_CLIENT_COUNTRY;
-SELECT * FROM T_CLIENT_CITY;
-
-SELECT * FROM T_VEHICLE_GENERAL;
-SELECT * FROM T_VEHICLE_TYPE;
-SELECT * FROM T_VEHICLE_COMFORT;
-SELECT * FROM T_VEHICLE_PERFORMANCE;
-SELECT * FROM T_VEHICLE_ASPIRATION;
-
-
-SELECT clt_general_first_name AS Prénom, clt_general_last_name AS Nom_Famille, 
-    clt_contact_mail AS Mail, clt_city_name AS Ville,
-    clt_country_name AS Pays
-FROM T_CLIENT_GENERAL AS CG
-JOIN T_CLIENT_CONTACT AS CC ON CG.clt_general_id = CC.clt_contact_id
-JOIN T_CLIENT_ADDRESS AS CA ON CG.clt_general_id = CA.clt_address_id
-JOIN T_CLIENT_CITY AS CCITY ON CA.clt_city_id = CCITY.clt_city_id
-JOIN T_CLIENT_COUNTRY AS CCOUNTRY ON CCITY.clt_country_id = CCOUNTRY.clt_country_id
-;
-
-
-
+-- Create the Reservation tables
 
 CREATE TABLE T_RESERVATION_GENERAL (
     rsv_general_id INTEGER,
@@ -243,26 +215,28 @@ CREATE TABLE T_RESERVATION_GENERAL (
     rsv_general_estimate_off DATETIME,
     rsv_general_date_off_id INTEGER,
     rsv_general_price_id INTEGER,
-    PRIMARY KEY (rsv_general_id)
---    , FOREIGN KEY rsv_client_general_id REFERENCES T_CLIENT_GENERAL (client_general_id)
---    FOREIGN KEY rsv_vehicle_general_id REFERENCES T_VEHICLE_GENERAL (vehicle_general_id)
+    PRIMARY KEY (rsv_general_id),
+    FOREIGN KEY (rsv_client_general_id) REFERENCES T_CLIENT_GENERAL (client_general_id),
+    FOREIGN KEY (rsv_vehicle_general_id) REFERENCES T_VEHICLE_GENERAL (vehicle_general_id)
 );
 
 CREATE TABLE T_RESERVATION_CHECKOUT (
     rsv_checkout_id INTEGER,
     rsv_checkout_date_off DATETIME,
     rsv_checkout_extra_days INTEGER,
-    PRIMARY KEY (rsv_checkout_id)
---    FOREIGN KEY (rsv_vehicle_general_id) REFERENCES T_VEHICLE_GENERAL (vehicle_general_id)
+    PRIMARY KEY (rsv_checkout_id),
+    FOREIGN KEY (rsv_checkout_id) REFERENCES T_VEHICLE_GENERAL (rsv_general_id)
 );
 
 CREATE TABLE T_RESERVATION_PRICING (
     rsv_pricing_id INTEGER,
     rsv_ordinary_pricing DECIMAL,
     rsv_extra_pricing DECIMAL,
-    PRIMARY KEY (rsv_pricing_id)
+    PRIMARY KEY (rsv_pricing_id),
+    FOREIGN KEY (rsv_pricing_id) REFERENCES T_VEHICLE_GENERAL (rsv_general_id)
 );
 
+-- Insert data in the reservation tables
 
 INSERT INTO T_RESERVATION_GENERAL (
     rsv_client_general_id, 
@@ -290,19 +264,55 @@ VALUES
     (1000, 500)
 ;
 
+-- Test the tables content if needed
+/*
+SELECT * FROM T_CLIENT_GENERAL;
+SELECT * FROM T_CLIENT_CONTACT;
+SELECT * FROM T_CLIENT_ADDRESS;
+SELECT * FROM T_CLIENT_COUNTRY;
+SELECT * FROM T_CLIENT_CITY;
 
-
+SELECT * FROM T_VEHICLE_GENERAL;
+SELECT * FROM T_VEHICLE_TYPE;
+SELECT * FROM T_VEHICLE_COMFORT;
+SELECT * FROM T_VEHICLE_PERFORMANCE;
+SELECT * FROM T_VEHICLE_ASPIRATION;
 
 SELECT * FROM T_RESERVATION_GENERAL;
 SELECT * FROM T_RESERVATION_CHECKOUT;
 SELECT * FROM T_RESERVATION_PRICING;
+*/
+
+-- A select query joining all the clien tables
+/*
+SELECT clt_general_first_name AS Prénom, clt_general_last_name AS Nom_Famille, 
+    clt_contact_mail AS Mail, clt_city_name AS Ville,
+    clt_country_name AS Pays
+FROM T_CLIENT_GENERAL AS CG
+JOIN T_CLIENT_CONTACT AS CC ON CG.clt_general_id = CC.clt_contact_id
+JOIN T_CLIENT_ADDRESS AS CA ON CG.clt_general_id = CA.clt_address_id
+JOIN T_CLIENT_CITY AS CCITY ON CA.clt_city_id = CCITY.clt_city_id
+JOIN T_CLIENT_COUNTRY AS CCOUNTRY ON CCITY.clt_country_id = CCOUNTRY.clt_country_id
+;
+*/
 
 
-SELECT rsv_general_date_on AS Vehicle_Pickup, rsv_general_duration AS "Loc Duration", 
-    rsv_general_estimate_off Loc_Estimate_End, rsv_checkout_date_off AS Vehicle_Restitution,
-    rsv_checkout_extra_days AS Extra_Days, (rsv_ordinary_pricing + rsv_extra_pricing) AS "Total Price"
+
+
+-- A query joining clients, vehicules, and rentals
+SELECT clt_general_first_name AS "Client First Name",
+        clt_general_last_name AS "Client Last Name",
+        veh_general_precise_model AS "Vehicle Model",
+        rsv_general_date_on AS "Rental Start Date",
+        rsv_general_duration AS "Loc Duration", 
+        rsv_general_estimate_off AS "Scheduled Rental End", 
+        rsv_checkout_date_off AS "Real Restitution Date",
+        rsv_checkout_extra_days AS "Extra Days", 
+        (rsv_ordinary_pricing + rsv_extra_pricing) AS "Total Price"
 FROM T_RESERVATION_GENERAL AS RG
 JOIN T_RESERVATION_CHECKOUT AS RC ON RC.rsv_checkout_id = RG.rsv_general_id
 JOIN T_RESERVATION_PRICING AS RP ON RP.rsv_pricing_id = RG.rsv_general_id
+JOIN T_CLIENT_GENERAL AS CG ON CG.clt_general_id = RG.rsv_general_id
+JOIN T_VEHICLE_GENERAL AS VG ON VG.veh_general_id = RG.rsv_general_id
 ;
 
