@@ -16,7 +16,6 @@ DROP TABLE IF EXISTS T_RESERVATION_CHECKOUT;
 DROP TABLE IF EXISTS T_RESERVATION_PRICING;
 
 -- Create the Client side tables
-
 CREATE TABLE T_CLIENT_GENERAL (
     clt_general_id INTEGER,
     clt_general_first_name VARCHAR(60),
@@ -55,11 +54,7 @@ CREATE TABLE T_CLIENT_COUNTRY (
     FOREIGN KEY (clt_country_id) REFERENCES T_CLIENT_CITY (clt_country_id)
 );
 
-
-
-
 -- Insert the client side data
-
 INSERT INTO T_CLIENT_GENERAL (
     clt_general_first_name, clt_general_last_name, clt_general_year_birth)
 VALUES 
@@ -179,7 +174,6 @@ CREATE TABLE T_VEHICLE_ASPIRATION (
 );
 
 -- Insert data in the vehicle tables
-
 INSERT INTO T_VEHICLE_GENERAL (
     veh_general_model, veh_general_brand, 
     veh_general_year, veh_general_type_id, 
@@ -196,7 +190,6 @@ VALUES
     ("XC40", "Volvo", 2018, 5, "XC40"),
     ("GT", "Ford", 2017, 2, "GT II")
 ;
-
 
 INSERT INTO T_VEHICLE_TYPE (
     veh_type_name)
@@ -231,7 +224,7 @@ INSERT INTO T_VEHICLE_PERFORMANCE (
 VALUES 
     (750, 1470, 3),
     (710, 1500, 3),
-    (645, 1530, 4),
+    (645, 1530, 1),
     (296, 1430, 2),
     (187, 1680, 1),
     (215, 1600, 5),
@@ -301,7 +294,7 @@ VALUES
     (2, 2, "2022-07-06", 22, "2022-07-27", 4, 4),
     (11, 3, "2022-07-04", 36, "2022-08-08", 5, 5),
     (8, 2, "2022-08-03", 5, "2022-08-07", 6, 6),
-    (19, 4, "2022-07-11", 5, "2022-07-19", 7, 7),
+    (19, 4, "2022-07-11", 9, "2022-07-19", 7, 7),
     (9, 9, "2022-07-15", 16, "2022-07-30", 8, 8),
     (13, 1, "2022-08-07", 12, "2022-08-18", 9, 9),
     (3, 4, "2022-07-28", 16, "2022-08-12", 10, 10),
@@ -317,7 +310,6 @@ VALUES
     (2, 6, "2022-08-05", 21, "2022-08-25", 20, 20),
     (15, 5, "2022-08-09", 11, "2022-08-19", 21, 21)
 ;
-
 
 INSERT INTO T_RESERVATION_CHECKOUT (
     rsv_checkout_date_off, 
@@ -362,8 +354,8 @@ VALUES
     (1340, 0)
 ;
 
--- Test the tables content if needed
 /*
+-- Test the tables content if needed
 SELECT * FROM T_CLIENT_GENERAL;
 SELECT * FROM T_CLIENT_CONTACT;
 SELECT * FROM T_CLIENT_ADDRESS;
@@ -380,12 +372,11 @@ SELECT * FROM T_RESERVATION_GENERAL;
 SELECT * FROM T_RESERVATION_CHECKOUT;
 SELECT * FROM T_RESERVATION_PRICING;
 */
-
-
--- A "select" query joining all the clien tables
-
+/*
+-- A "select" query joining all the "client" tables
 SELECT clt_general_id,
-clt_general_first_name AS Prénom, clt_general_last_name AS Nom_Famille, 
+clt_general_first_name AS Prénom, clt_general_last_name AS Nom_Famille,
+    clt_contact_phone AS Tel,
     clt_contact_mail AS Mail, clt_city_name AS Ville,
     clt_country_name AS Pays
 FROM T_CLIENT_GENERAL AS CG
@@ -395,7 +386,7 @@ JOIN T_CLIENT_CITY AS CCITY ON CA.clt_city_id = CCITY.clt_city_id
 JOIN T_CLIENT_COUNTRY AS CCOUNTRY ON CCITY.clt_country_id = CCOUNTRY.clt_country_id
 ;
 
--- A "select" query joining all the Vehicles tables
+-- A "select" query joining all the "Vehicles" tables
 SELECT veh_general_precise_model AS Model,
         veh_general_brand AS Brand,
         veh_type_name AS Bodytype,
@@ -409,7 +400,7 @@ JOIN T_VEHICLE_PERFORMANCE AS VP ON VP.veh_performance_id = VG.veh_general_id
 JOIN T_VEHICLE_ASPIRATION AS VA ON VA.veh_aspiration_id = VP.veh_aspiration_id
 ;
 
--- A "select" query joining clients, vehicules, and rentals
+-- A "select" query joining "clients", "vehicules", and "Reservation" tables
 SELECT clt_general_first_name AS "Client First Name",
         clt_general_last_name AS "Client Last Name",
         veh_general_precise_model AS "Vehicle Model",
@@ -424,4 +415,242 @@ JOIN T_RESERVATION_CHECKOUT AS RC ON RC.rsv_checkout_id = RG.rsv_general_id
 JOIN T_RESERVATION_PRICING AS RP ON RP.rsv_pricing_id = RG.rsv_general_id
 JOIN T_CLIENT_GENERAL AS CG ON CG.clt_general_id = RG.rsv_client_general_id
 JOIN T_VEHICLE_GENERAL AS VG ON VG.veh_general_id = RG.rsv_vehicle_general_id
+;
+*/
+-- EXERCICE : Which hatchback has been the most rented (in days), while the reservation started in July ? 
+-- step 1 : SELECT number of days the hatchbacks reservation lasted over july and august
+SELECT veh_general_model AS "Car Model", CAST ((
+    (JulianDay(rsv_checkout_date_off) - JulianDay(rsv_general_date_on))+1
+) As Integer) AS "Number of days rented hatchbacks in July"
+FROM T_RESERVATION_GENERAL AS RG
+JOIN T_RESERVATION_CHECKOUT AS RC ON RC.rsv_checkout_id = RG.rsv_general_date_off_id
+JOIN T_VEHICLE_GENERAL AS VG ON RG.rsv_vehicle_general_id = VG.veh_general_id
+JOIN T_VEHICLE_TYPE AS VT ON VT.veh_type_id = VG.veh_general_type_id
+    WHERE veh_type_name = "Hatchback" 
+;
+
+--step 2, with a twist : 
+-- SELECT number of days the hatchbacks have been rented, before august, by clients having a particular phone number
+Select veh_general_model AS "Car Model", Cast ((
+    (JulianDay(rsv_checkout_date_off) - JulianDay(rsv_general_date_on))+1
+) As Integer) AS "Number of days rented"
+FROM T_RESERVATION_GENERAL AS RG
+JOIN T_RESERVATION_CHECKOUT AS RC ON RC.rsv_checkout_id = RG.rsv_general_date_off_id
+JOIN T_VEHICLE_GENERAL AS VG ON RG.rsv_vehicle_general_id = VG.veh_general_id
+JOIN T_VEHICLE_TYPE AS VT ON VT.veh_type_id = VG.veh_general_type_id
+JOIN T_CLIENT_GENERAL AS CG ON CG.clt_general_id = RG.rsv_client_general_id
+JOIN T_CLIENT_CONTACT AS CCONTACT ON CCONTACT.clt_contact_id = CG.clt_general_id
+    WHERE veh_type_name = "Hatchback" 
+        AND rsv_general_date_on < "2022-08-01"
+        AND CAST(clt_contact_phone AS TEXT) LIKE "7________"
+;
+
+-- SELECT total days rented for each hatchbacks during July and August 22
+SELECT veh_general_model AS "Car Model",  
+        SUM(CAST(((JulianDay(rsv_checkout_date_off) - JulianDay(rsv_general_date_on))+1) 
+            AS INTEGER)) AS "Number of days hatchbacks rented in july and august (unions)"
+FROM T_RESERVATION_GENERAL AS RG
+JOIN T_RESERVATION_CHECKOUT AS RC ON RC.rsv_checkout_id = RG.rsv_general_date_off_id
+JOIN T_VEHICLE_GENERAL AS VG ON RG.rsv_vehicle_general_id = VG.veh_general_id
+JOIN T_VEHICLE_TYPE AS VT ON VT.veh_type_id = VG.veh_general_type_id
+JOIN T_CLIENT_GENERAL AS CG ON CG.clt_general_id = RG.rsv_client_general_id
+JOIN T_CLIENT_CONTACT AS CCONTACT ON CCONTACT.clt_contact_id = CG.clt_general_id
+    WHERE veh_type_name = "Hatchback" 
+        AND veh_general_model LIKE "mégane"
+UNION
+SELECT veh_general_model AS "Car Model",  
+        SUM(CAST(((JulianDay(rsv_checkout_date_off) - JulianDay(rsv_general_date_on))+1) 
+            AS INTEGER))
+FROM T_RESERVATION_GENERAL AS RG
+JOIN T_RESERVATION_CHECKOUT AS RC ON RC.rsv_checkout_id = RG.rsv_general_date_off_id
+JOIN T_VEHICLE_GENERAL AS VG ON RG.rsv_vehicle_general_id = VG.veh_general_id
+JOIN T_VEHICLE_TYPE AS VT ON VT.veh_type_id = VG.veh_general_type_id
+JOIN T_CLIENT_GENERAL AS CG ON CG.clt_general_id = RG.rsv_client_general_id
+JOIN T_CLIENT_CONTACT AS CCONTACT ON CCONTACT.clt_contact_id = CG.clt_general_id
+    WHERE veh_type_name = "Hatchback" 
+        AND veh_general_model LIKE "yaris"
+UNION
+SELECT veh_general_model AS "Car Model",  
+        SUM(CAST(((JulianDay(rsv_checkout_date_off) - JulianDay(rsv_general_date_on))+1) 
+            AS INTEGER))
+FROM T_RESERVATION_GENERAL AS RG
+JOIN T_RESERVATION_CHECKOUT AS RC ON RC.rsv_checkout_id = RG.rsv_general_date_off_id
+JOIN T_VEHICLE_GENERAL AS VG ON RG.rsv_vehicle_general_id = VG.veh_general_id
+JOIN T_VEHICLE_TYPE AS VT ON VT.veh_type_id = VG.veh_general_type_id
+JOIN T_CLIENT_GENERAL AS CG ON CG.clt_general_id = RG.rsv_client_general_id
+JOIN T_CLIENT_CONTACT AS CCONTACT ON CCONTACT.clt_contact_id = CG.clt_general_id
+    WHERE veh_type_name = "Hatchback" 
+        AND veh_general_model LIKE "leaf"
+ORDER BY "Number of days hatchbacks rented in july and august (unions)" DESC
+;
+
+-- Same query, without unions 
+SELECT veh_general_model AS "Car Model",  
+        SUM(CAST(((JulianDay(rsv_checkout_date_off) - JulianDay(rsv_general_date_on))+1) 
+            AS INTEGER)) AS "Number of days hatchbacks rented in july and august (OR)"
+FROM T_RESERVATION_GENERAL AS RG
+JOIN T_RESERVATION_CHECKOUT AS RC ON RC.rsv_checkout_id = RG.rsv_general_date_off_id
+JOIN T_VEHICLE_GENERAL AS VG ON RG.rsv_vehicle_general_id = VG.veh_general_id
+JOIN T_VEHICLE_TYPE AS VT ON VT.veh_type_id = VG.veh_general_type_id
+JOIN T_CLIENT_GENERAL AS CG ON CG.clt_general_id = RG.rsv_client_general_id
+JOIN T_CLIENT_CONTACT AS CCONTACT ON CCONTACT.clt_contact_id = CG.clt_general_id
+    WHERE veh_type_name = "Hatchback" 
+        AND (
+            veh_general_model LIKE "mégane"
+            OR
+            veh_general_model LIKE "yaris"
+            OR
+            veh_general_model LIKE "leaf"
+            )
+GROUP BY veh_general_model
+ORDER BY "Number of days hatchbacks rented in july and august (OR)" DESC
+;
+-- Lesson : WRONG = << AND (veh_general_model LIKE "mégane" OR "yaris" OR "leaf") >>
+
+-- Same query, narowing the results to reservations that started in July
+-- This answers the exercise : the hatchback is the Yaris, with 38 dans rented, while reservation started in July
+SELECT veh_general_model AS "Car Model",  
+        SUM(CAST(((JulianDay(rsv_checkout_date_off) - JulianDay(rsv_general_date_on))+1) 
+            AS INTEGER)) AS "Number of days hatchbacks rented in july Only (unions)"
+FROM T_RESERVATION_GENERAL AS RG
+JOIN T_RESERVATION_CHECKOUT AS RC ON RC.rsv_checkout_id = RG.rsv_general_date_off_id
+JOIN T_VEHICLE_GENERAL AS VG ON RG.rsv_vehicle_general_id = VG.veh_general_id
+JOIN T_VEHICLE_TYPE AS VT ON VT.veh_type_id = VG.veh_general_type_id
+JOIN T_CLIENT_GENERAL AS CG ON CG.clt_general_id = RG.rsv_client_general_id
+JOIN T_CLIENT_CONTACT AS CCONTACT ON CCONTACT.clt_contact_id = CG.clt_general_id
+    WHERE veh_type_name = "Hatchback" 
+        AND veh_general_model LIKE "mégane"
+        AND rsv_general_date_on < "2022-08-01"
+UNION
+SELECT veh_general_model AS "Car Model",  
+        SUM(CAST(((JulianDay(rsv_checkout_date_off) - JulianDay(rsv_general_date_on))+1) 
+            AS INTEGER)) AS "Number of days rented in july"
+FROM T_RESERVATION_GENERAL AS RG
+JOIN T_RESERVATION_CHECKOUT AS RC ON RC.rsv_checkout_id = RG.rsv_general_date_off_id
+JOIN T_VEHICLE_GENERAL AS VG ON RG.rsv_vehicle_general_id = VG.veh_general_id
+JOIN T_VEHICLE_TYPE AS VT ON VT.veh_type_id = VG.veh_general_type_id
+JOIN T_CLIENT_GENERAL AS CG ON CG.clt_general_id = RG.rsv_client_general_id
+JOIN T_CLIENT_CONTACT AS CCONTACT ON CCONTACT.clt_contact_id = CG.clt_general_id
+    WHERE veh_type_name = "Hatchback" 
+        AND veh_general_model LIKE "yaris"
+        AND rsv_general_date_on < "2022-08-01"
+UNION
+SELECT veh_general_model AS "Car Model",  
+        SUM(CAST(((JulianDay(rsv_checkout_date_off) - JulianDay(rsv_general_date_on))+1) 
+            AS INTEGER)) AS "Number of days rented in july"
+FROM T_RESERVATION_GENERAL AS RG
+JOIN T_RESERVATION_CHECKOUT AS RC ON RC.rsv_checkout_id = RG.rsv_general_date_off_id
+JOIN T_VEHICLE_GENERAL AS VG ON RG.rsv_vehicle_general_id = VG.veh_general_id
+JOIN T_VEHICLE_TYPE AS VT ON VT.veh_type_id = VG.veh_general_type_id
+JOIN T_CLIENT_GENERAL AS CG ON CG.clt_general_id = RG.rsv_client_general_id
+JOIN T_CLIENT_CONTACT AS CCONTACT ON CCONTACT.clt_contact_id = CG.clt_general_id
+    WHERE veh_type_name = "Hatchback" 
+        AND veh_general_model LIKE "leaf"
+        AND rsv_general_date_on < "2022-08-01"
+ORDER BY "Number of days rented in july" DESC
+;
+
+
+-- EXERCICE : verify the phone numbers of clients renting coupés in July
+-- SELECT, for each coupé, the number of days coupé rents lasted, if rent started in july, and identifying the clients by their phone number
+Select 
+    clt_general_last_name AS name,
+    veh_general_model AS "Car Model", Cast ((
+    (JulianDay(rsv_checkout_date_off) - JulianDay(rsv_general_date_on))+1
+) As Integer) AS "Number of days Coupé rents lasted if started in july (not cast phone)"
+FROM T_RESERVATION_GENERAL AS RG
+JOIN T_RESERVATION_CHECKOUT AS RC ON RC.rsv_checkout_id = RG.rsv_general_date_off_id
+JOIN T_VEHICLE_GENERAL AS VG ON RG.rsv_vehicle_general_id = VG.veh_general_id
+JOIN T_VEHICLE_TYPE AS VT ON VT.veh_type_id = VG.veh_general_type_id
+JOIN T_CLIENT_GENERAL AS CG ON CG.clt_general_id = RG.rsv_client_general_id
+JOIN T_CLIENT_CONTACT AS CCONTACT ON CCONTACT.clt_contact_id = CG.clt_general_id
+    WHERE veh_type_name = "Coupé" 
+        AND rsv_general_date_on < "2022-08-01"
+        AND (
+            clt_contact_phone LIKE "_85______"
+            OR clt_contact_phone LIKE "_23______")
+;
+
+-- same query. Casting the phone number prom INT to TEXT : 
+--SELECT, for each coupé, the number of days coupé rents lasted, if rent started in july, and identifying the clients by their phone number
+Select 
+    clt_general_last_name AS name,
+    veh_general_model AS "Car Model", Cast ((
+    (JulianDay(rsv_checkout_date_off) - JulianDay(rsv_general_date_on))+1
+) As Integer) AS "Number of days Coupé rents lasted if started in july (cast phone technique)"
+FROM T_RESERVATION_GENERAL AS RG
+JOIN T_RESERVATION_CHECKOUT AS RC ON RC.rsv_checkout_id = RG.rsv_general_date_off_id
+JOIN T_VEHICLE_GENERAL AS VG ON RG.rsv_vehicle_general_id = VG.veh_general_id
+JOIN T_VEHICLE_TYPE AS VT ON VT.veh_type_id = VG.veh_general_type_id
+JOIN T_CLIENT_GENERAL AS CG ON CG.clt_general_id = RG.rsv_client_general_id
+JOIN T_CLIENT_CONTACT AS CCONTACT ON CCONTACT.clt_contact_id = CG.clt_general_id
+    WHERE veh_type_name = "Coupé" 
+        AND rsv_general_date_on < "2022-08-01"
+        AND 
+            (CAST(clt_contact_phone AS TEXT) LIKE "_85______"
+            OR CAST(clt_contact_phone AS TEXT) LIKE "_23______")
+;
+*/
+
+-- EXERCICE : What is the average power of cars rented by clients living in ROME ? (if a car is rented multiple times, it counts multiple times)
+-- step 1 : get car power, if car has been rented
+SELECT 
+    veh_general_model AS Model,
+    veh_performance_horsepower AS Power
+FROM T_VEHICLE_GENERAL AS VG
+JOIN T_RESERVATION_GENERAL AS RG ON RG.rsv_vehicle_general_id = VG.veh_general_id
+JOIN T_VEHICLE_PERFORMANCE AS VP ON VP.veh_performance_id = VG.veh_general_id
+    WHERE
+        rsv_vehicle_general_id = veh_general_id
+GROUP BY veh_general_model
+;
+
+-- step 2 : Narrow to reservations coming from clients living in Miami
+SELECT 
+    veh_general_model AS Model,
+    veh_performance_horsepower AS Power,
+    clt_general_first_name AS "First Name",
+    clt_general_last_name AS "Last Name",
+    clt_city_name AS City
+FROM T_VEHICLE_GENERAL AS VG
+JOIN T_RESERVATION_GENERAL AS RG ON RG.rsv_vehicle_general_id = VG.veh_general_id
+JOIN T_CLIENT_GENERAL AS CG ON CG.clt_general_id = RG.rsv_client_general_id
+JOIN T_VEHICLE_PERFORMANCE AS VP ON VP.veh_performance_id = VG.veh_general_id
+JOIN T_CLIENT_ADDRESS AS CA ON CA.clt_address_id = CG.clt_general_id
+JOIN T_CLIENT_CITY AS CCITY ON CCITY.clt_city_id = CA.clt_city_id
+    WHERE
+        clt_city_name = "Miami"
+;
+
+-- Step 3 : Find the average power of cars they rented
+SELECT 
+    AVG(veh_performance_horsepower) AS "Average Power of cars rented in Miami",
+    clt_city_name AS City
+FROM T_VEHICLE_GENERAL AS VG
+JOIN T_RESERVATION_GENERAL AS RG ON RG.rsv_vehicle_general_id = VG.veh_general_id
+JOIN T_CLIENT_GENERAL AS CG ON CG.clt_general_id = RG.rsv_client_general_id
+JOIN T_VEHICLE_PERFORMANCE AS VP ON VP.veh_performance_id = VG.veh_general_id
+JOIN T_CLIENT_ADDRESS AS CA ON CA.clt_address_id = CG.clt_general_id
+JOIN T_CLIENT_CITY AS CCITY ON CCITY.clt_city_id = CA.clt_city_id
+    WHERE
+        clt_city_name = "Miami"
+;
+
+-- One more restriction on the query : select only the cars that were rented more than 2 week
+-- step 4 : select cars rented for more than 14 days (join the checkout table)
+SELECT 
+    AVG(veh_performance_horsepower) AS "Average Power of cars rented in Miami",
+    clt_city_name AS City
+FROM T_VEHICLE_GENERAL AS VG
+JOIN T_RESERVATION_GENERAL AS RG ON RG.rsv_vehicle_general_id = VG.veh_general_id
+JOIN T_CLIENT_GENERAL AS CG ON CG.clt_general_id = RG.rsv_client_general_id
+JOIN T_VEHICLE_PERFORMANCE AS VP ON VP.veh_performance_id = VG.veh_general_id
+JOIN T_CLIENT_ADDRESS AS CA ON CA.clt_address_id = CG.clt_general_id
+JOIN T_CLIENT_CITY AS CCITY ON CCITY.clt_city_id = CA.clt_city_id
+JOIN T_RESERVATION_CHECKOUT AS RC ON RC.rsv_checkout_id = RG.rsv_general_date_off_id
+    WHERE
+            clt_city_name = "Miami"
+        AND
+            CAST(((JulianDay(rsv_checkout_date_off) - JulianDay(rsv_general_date_on))+1) 
+            AS INTEGER) > 14
 ;
