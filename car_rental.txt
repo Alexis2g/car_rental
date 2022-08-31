@@ -417,6 +417,7 @@ JOIN T_CLIENT_GENERAL AS CG ON CG.clt_general_id = RG.rsv_client_general_id
 JOIN T_VEHICLE_GENERAL AS VG ON VG.veh_general_id = RG.rsv_vehicle_general_id
 ;
 */
+/*
 -- EXERCICE : Which hatchback has been the most rented (in days), while the reservation started in July ? 
 -- step 1 : SELECT number of days the hatchbacks reservation lasted over july and august
 SELECT veh_general_model AS "Car Model", CAST ((
@@ -429,7 +430,7 @@ JOIN T_VEHICLE_TYPE AS VT ON VT.veh_type_id = VG.veh_general_type_id
     WHERE veh_type_name = "Hatchback" 
 ;
 
---step 2, with a twist : 
+-- test step :  
 -- SELECT number of days the hatchbacks have been rented, before august, by clients having a particular phone number
 Select veh_general_model AS "Car Model", Cast ((
     (JulianDay(rsv_checkout_date_off) - JulianDay(rsv_general_date_on))+1
@@ -445,7 +446,8 @@ JOIN T_CLIENT_CONTACT AS CCONTACT ON CCONTACT.clt_contact_id = CG.clt_general_id
         AND CAST(clt_contact_phone AS TEXT) LIKE "7________"
 ;
 
--- SELECT total days rented for each hatchbacks during July and August 22
+-- test step :
+-- SELECT total days rented for each hatchbacks during July and August 22 (with UNIONS)
 SELECT veh_general_model AS "Car Model",  
         SUM(CAST(((JulianDay(rsv_checkout_date_off) - JulianDay(rsv_general_date_on))+1) 
             AS INTEGER)) AS "Number of days hatchbacks rented in july and august (unions)"
@@ -506,6 +508,7 @@ GROUP BY veh_general_model
 ORDER BY "Number of days hatchbacks rented in july and august (OR)" DESC
 ;
 -- Lesson : WRONG = << AND (veh_general_model LIKE "mégane" OR "yaris" OR "leaf") >>
+*/
 
 -- Same query, narowing the results to reservations that started in July
 -- This answers the exercise : the hatchback is the Yaris, with 38 dans rented, while reservation started in July
@@ -550,7 +553,7 @@ JOIN T_CLIENT_CONTACT AS CCONTACT ON CCONTACT.clt_contact_id = CG.clt_general_id
 ORDER BY "Number of days rented in july" DESC
 ;
 
-
+/*
 -- EXERCICE : verify the phone numbers of clients renting coupés in July
 -- SELECT, for each coupé, the number of days coupé rents lasted, if rent started in july, and identifying the clients by their phone number
 Select 
@@ -591,7 +594,7 @@ JOIN T_CLIENT_CONTACT AS CCONTACT ON CCONTACT.clt_contact_id = CG.clt_general_id
             OR CAST(clt_contact_phone AS TEXT) LIKE "_23______")
 ;
 */
-
+/*
 -- EXERCICE : What is the average power of cars rented by clients living in ROME ? (if a car is rented multiple times, it counts multiple times)
 -- step 1 : get car power, if car has been rented
 SELECT 
@@ -635,7 +638,7 @@ JOIN T_CLIENT_CITY AS CCITY ON CCITY.clt_city_id = CA.clt_city_id
     WHERE
         clt_city_name = "Miami"
 ;
-
+*/
 -- One more restriction on the query : select only the cars that were rented more than 2 week
 -- step 4 : select cars rented for more than 14 days (join the checkout table)
 SELECT 
