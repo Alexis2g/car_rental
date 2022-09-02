@@ -657,3 +657,48 @@ JOIN T_RESERVATION_CHECKOUT AS RC ON RC.rsv_checkout_id = RG.rsv_general_date_of
             CAST(((JulianDay(rsv_checkout_date_off) - JulianDay(rsv_general_date_on))+1) 
             AS INTEGER) > 14
 ;
+
+SELECT language, COUNT(problem_id) AS lang_count
+FROM submissions
+GROUP BY language
+;
+
+SELECT nickname,
+ TIMESTAMPDIFF (YEAR,
+  birth, NOW()
+) AS year25
+FROM players
+WHERE TIMESTAMPDIFF (YEAR,
+  birth, NOW()) = 25
+;
+
+SELECT nickname, COUNT(DISTINCT submissions.problem_id)
+FROM players
+JOIN submissions ON submissions.user_id = players.user_id
+JOIN problems ON problems.problem_id = submissions.problem_id
+GROUP BY players.nickname
+ORDER BY COUNT(DISTINCT submissions.problem_id) DESC
+LIMIT 10
+;
+
+/*
+-- EXERCIE 4 = 
+SELECT * FROM submissions
+LIMIT 5;
+
+SELECT nickname, submissions.problem_id, COUNT(submissions.problem_id)
+FROM players
+JOIN submissions ON submissions.user_id = players.user_id
+JOIN problems ON problems.problem_id = submissions.problem_id
+
+WHERE ( 
+
+SELECT submissions.problem_id, COUNT(submissions.problem_id)
+FROM players
+JOIN submissions ON submissions.user_id = players.user_id
+JOIN problems ON problems.problem_id = submissions.problem_id
+GROUP BY submissions.problem_id
+HAVING COUNT(submissions.problem_id)>1
+LIMIT 10
+)
+;
