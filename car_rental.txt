@@ -658,11 +658,14 @@ JOIN T_RESERVATION_CHECKOUT AS RC ON RC.rsv_checkout_id = RG.rsv_general_date_of
             AS INTEGER) > 14
 ;
 
+
+-- EXO 1
 SELECT language, COUNT(problem_id) AS lang_count
 FROM submissions
 GROUP BY language
 ;
 
+-- EXO 2
 SELECT nickname,
  TIMESTAMPDIFF (YEAR,
   birth, NOW()
@@ -672,6 +675,7 @@ WHERE TIMESTAMPDIFF (YEAR,
   birth, NOW()) = 25
 ;
 
+-- EXO 3
 SELECT nickname, COUNT(DISTINCT submissions.problem_id)
 FROM players
 JOIN submissions ON submissions.user_id = players.user_id
@@ -682,7 +686,7 @@ LIMIT 10
 ;
 
 
-
+-- EXO 4
 SELECT nickname, submissions.problem_id, submissions.language
 FROM submissions
 JOIN problems ON problems.problem_id = submissions.problem_id
