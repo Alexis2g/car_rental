@@ -687,74 +687,13 @@ LIMIT 10
 
 
 -- EXO 4
-SELECT nickname, submissions.problem_id, submissions.language
+SELECT DISTINCT nickname
 FROM submissions
-JOIN problems ON problems.problem_id = submissions.problem_id
 JOIN players ON submissions.user_id = players.user_id
-WHERE (
+    GROUP BY submissions.user_id,submissions.problem_id
+    HAVING COUNT(DISTINCT language) >= 2
+ORDER BY nickname
 
-    SELECT submissions.problem_id, COUNT(submissions.problem_id)
-    FROM submissions
-    GROUP BY submissions.problem_id
-    HAVING COUNT(submissions.problem_id) > 1
-
-) 
-LIMIT 150
+LIMIT 20
 ;
 
-/*
-SELECT nickname, submissions.problem_id
---(COUNT(submissions.problem_id) >= 2) AS cnt_pb
-FROM submissions
-JOIN problems ON problems.problem_id = submissions.problem_id
-JOIN players ON submissions.user_id = players.user_id
--- GROUP BY nickname, submissions.problem_id
-
-LIMIT 150
-;
-*/
-
-
-
-
-
-
--- NOT GOOD : séléctionne les tests réalisés deux fois
-
-SELECT nickname, submissions.language, submissions.problem_id, (COUNT(submissions.problem_id) >= 2) AS test_x_times_same_language
-FROM submissions
-JOIN problems ON problems.problem_id = submissions.problem_id
-JOIN players ON submissions.user_id = players.user_id
-GROUP BY nickname, submissions.language, submissions.problem_id
-having  test_x_times_same_language > 0
-
-LIMIT 5
-;
-
-
-
-
-
-
-
-/*
--- EXERCIE 4 = 
-SELECT * FROM submissions
-LIMIT 5;
-
-SELECT nickname, submissions.problem_id, COUNT(submissions.problem_id)
-FROM players
-JOIN submissions ON submissions.user_id = players.user_id
-JOIN problems ON problems.problem_id = submissions.problem_id
-
-WHERE ( 
-
-SELECT submissions.problem_id, COUNT(submissions.problem_id)
-FROM players
-JOIN submissions ON submissions.user_id = players.user_id
-JOIN problems ON problems.problem_id = submissions.problem_id
-GROUP BY submissions.problem_id
-HAVING COUNT(submissions.problem_id)>1
-LIMIT 10
-)
-;
