@@ -697,3 +697,17 @@ ORDER BY nickname
 LIMIT 20
 ;
 
+-- EXO 5
+SELECT DISTINCT nickname
+FROM players
+JOIN submissions ON submissions.user_id = players.user_id
+JOIN problems ON problems.problem_id = submissions.problem_id
+WHERE 
+    (problems.difficulty = "MEDIUM" OR problems.difficulty = "HARD")
+    AND 
+    submissions.score = 100
+GROUP BY nickname, submissions.user_id
+HAVING COUNT(submissions.user_id) >= 60
+;
+
+
